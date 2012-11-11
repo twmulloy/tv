@@ -9,9 +9,9 @@
 </dl>
 
 
-<% @site.page.each do |iframe| %>
-<p>concur: <%= iframe %></p>
-<iframe src="<%= iframe %>" width="800" height="600"></iframe>
+<% @site.page[:maybe].each do |src| %>
+<p>concur: <%= src %></p>
+<iframe src="<%= src %>" width="800" height="600"></iframe>
 <% end %>
 
 

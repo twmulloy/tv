@@ -9,8 +9,7 @@ class Site < ActiveRecord::Base
   def page
 
     url = read_attribute(:url)
-    p recursive_iframe(url)
-    []
+    recursive_iframe(url)
   end
 
 private
@@ -33,7 +32,11 @@ private
       html = Nokogiri.HTML(response)
 
       # current html searches
-      hits << script_search(url, html)
+      hit = script_search(url, html)
+      unless hit.nil?
+        hits << hit
+      end
+
       #puts form_search(url, html)
 
       # iframe recursion
@@ -66,6 +69,7 @@ private
 
     urls.uniq!
     hits.uniq!
+    hits.flatten!
 
     {
       poor: urls,
@@ -91,7 +95,7 @@ private
       end
     end
 
-    hits
+    hits.uniq!
 
   end
 
