@@ -9,7 +9,8 @@ class Site < ActiveRecord::Base
   def page
 
     url = read_attribute(:url)
-    recursive_iframe(url)
+    result = recursive_iframe(url)
+    result[:maybe]
   end
 
 private
@@ -33,9 +34,7 @@ private
 
       # current html searches
       hit = script_search(url, html)
-      unless hit.nil?
-        hits << hit
-      end
+      hits << hit unless hit.nil?
 
       #puts form_search(url, html)
 
@@ -62,14 +61,15 @@ private
 
         (urls << src).flatten
 
-        recursive_iframe(src, urls) 
+        recursive_iframe(src, urls, hits) 
       end
 
     end
 
     urls.uniq!
-    hits.uniq!
     hits.flatten!
+    hits.uniq!
+
 
     {
       poor: urls,
