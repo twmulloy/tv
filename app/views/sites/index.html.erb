@@ -1,0 +1,30 @@
+<%- model_class = Site -%>
+<div class="page-header">
+  <h1><%=t '.title', :default => model_class.model_name.human.pluralize %></h1>
+</div>
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th><%= model_class.human_attribute_name(:id) %></th>
+      <th><%= model_class.human_attribute_name(:url) %></th>
+      <th><%= model_class.human_attribute_name(:created_at) %></th>
+      <th><%=t '.actions', :default => t("helpers.actions") %></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @sites.each do |site| %>
+      <tr>
+        <td><%= link_to site.id, site_path(site) %></td>
+        <td><%= site.url %></td>
+        <td><%=l site.created_at %></td>
+        <td>
+          <%= link_to 'Show', site_path(site), class: 'btn btn-mini' %>
+          <%= link_to 'Edit', edit_site_path(site), class: 'btn btn-mini' %>
+          <%= link_to 'Delete', site_path(site), method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-mini btn-danger' %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<%= link_to 'New', new_site_path, class: 'btn btn-primary' %>

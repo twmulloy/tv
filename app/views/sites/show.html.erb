@@ -1,0 +1,23 @@
+<%- model_class = Site -%>
+<div class="page-header">
+  <h1><%=t '.title', :default => model_class.model_name.human %></h1>
+</div>
+
+<dl class="dl-horizontal">
+  <dt><strong><%= model_class.human_attribute_name(:url) %>:</strong></dt>
+  <dd><%= @site.url %></dd>
+</dl>
+
+
+<% @site.page.each do |iframe| %>
+<p>concur: <%= iframe %></p>
+<iframe src="<%= iframe %>" width="800" height="600"></iframe>
+<% end %>
+
+
+
+<div class="form-actions">
+  <%= link_to 'Back', sites_path, :class => 'btn'  %>
+  <%= link_to 'Edit', edit_site_path(@site), :class => 'btn' %>
+  <%= link_to 'Destroy', site_path(@site), :method => 'delete', :data => { :confirm => 'Are you sure?' }, :class => 'btn btn-danger' %>
+</div>
