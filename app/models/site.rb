@@ -1,6 +1,6 @@
 class Site < ActiveRecord::Base
   attr_accessible :url
-  has_many :concurs
+  has_many :concurs, dependent: :destroy
   validates :url, uniqueness: true
 
 
@@ -10,6 +10,12 @@ class Site < ActiveRecord::Base
 
     url = read_attribute(:url)
     result = recursive_iframe(url)
+    p result
+
+    result[:maybe].each do |url|
+      p Nokogiri.HTML(RestClient.get(url)).css('object')
+    end
+
     result[:maybe]
   end
 
@@ -33,7 +39,7 @@ private
       html = Nokogiri.HTML(response)
 
       # current html searches
-      hit = script_search(url, html)
+      hit = source_search(url, html)
       hits << hit unless hit.nil?
 
       #puts form_search(url, html)
@@ -59,6 +65,7 @@ private
         next unless valid_url?(src)
         next if urls.include?(src)
 
+        puts src
         (urls << src).flatten
 
         recursive_iframe(src, urls, hits) 
@@ -79,19 +86,22 @@ private
   end
 
   # raises potential video page by looking for specific scripts
-  def script_search(url, html)
+  def source_search(url, html)
 
     hits = []
 
-    html.css('script').each do |script|
-      src = script.attr('src')
+    html.css('script,embed,object').each do |source|
 
-      # script search
+      # attributes
+      data = source.attr('data')
+      src = source.attr('src')
+
       if src.nil?
         # load script and parse?
       else
         # check src lib name
-        hits << url if src =~ /swfobject.js/i
+        hits << url if src =~ /swfobject.js|player.swf/i
+        hits << url if data =~ /player.swf/i
       end
     end
 
